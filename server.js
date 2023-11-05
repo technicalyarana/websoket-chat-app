@@ -7,6 +7,9 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+// Store connected clients and their usernames
+const clients = new Map();
+
 // Serve your HTML, CSS, and JavaScript files
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -14,16 +17,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 wss.on('connection', (ws) => {
   console.log('WebSocket client connected');
 
-  // WebSocket event handlers
+  // Send a welcome message to the newly connected client
+  ws.send('Welcome to the chat! Please enter your username.');
+
   ws.on('message', (message) => {
-    console.log(`Received: ${message}`);
-    
-    // Send a response back to the client
-    ws.send(`Server received: ${message}`);
+    if (!clients.has(ws)) {
+      // If the client doesn't have a username, set it as the received message
+      clients.set(ws, message);
+      ws.send(`You are now known as "${message}"`);
+    } else {
+      const sender = clients.get(ws);
+
+      // Broadcast the message to all connected clients (except the sender)
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(`${sender}: ${message}`);
+        }
+      });
+    }
   });
 
   ws.on('close', () => {
-    console.log('WebSocket client disconnected');
+    const username = clients.get(ws);
+    clients.delete(ws);
+    console.log(`WebSocket client disconnected: ${username}`);
   });
 });
 
