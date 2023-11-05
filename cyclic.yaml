@@ -1,5 +1,0 @@
-tasks:
-  - name: "node-server"
-    script: "node server.js"
-    ports:
-      - 3000  # The port your application listens on
