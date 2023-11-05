@@ -1,10 +1,5 @@
 tasks:
-  - name: "express-server"
-    script: "npm start"  # This assumes your Express app starts with "npm start"
+  - name: "node-server"
+    script: "node server.js"
     ports:
-      - 3000
-
-  - name: "websocket-server"
-    script: "node server.js"  # Replace with the actual WebSocket server file
-    ports:
-      - 8080
+      - 3000  # The port your application listens on
