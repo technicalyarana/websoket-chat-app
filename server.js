@@ -47,5 +47,5 @@ wss.on('connection', (ws) => {
 const port = process.env.PORT || 3000;
 
 server.listen(port, () => {
-  console.log(`Server is running on http://35.160.120.126:${port}`);
+  console.log(`Server is running on https://web-socket-yarana.onrender.com:${port}`);
 });
